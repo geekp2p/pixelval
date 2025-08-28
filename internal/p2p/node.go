@@ -21,7 +21,7 @@ import (
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	ma "github.com/multiformats/go-multiaddr"
 
-	"github.com/geekp2p/pixelval/internal/config"
+	"pixelval/internal/config"
 )
 
 type mdnsNotifee struct{ h host.Host }

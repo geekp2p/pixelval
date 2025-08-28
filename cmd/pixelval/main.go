@@ -9,9 +9,9 @@ import (
 
 	"github.com/joho/godotenv"
 
-	"github.com/geekp2p/pixelval/internal/config"
-	"github.com/geekp2p/pixelval/internal/gateway"
-	"github.com/geekp2p/pixelval/internal/p2p"
+	"pixelval/internal/config"
+	"pixelval/internal/gateway"
+	"pixelval/internal/p2p"
 )
 
 func main() {

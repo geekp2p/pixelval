@@ -9,7 +9,7 @@ import (
 	relayv2 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 	ma "github.com/multiformats/go-multiaddr"
 
-	"github.com/geekp2p/pixelval/internal/config"
+	"pixelval/internal/config"
 )
 
 func StartEmbeddedRelay(ctx context.Context, cfg config.Config) {
