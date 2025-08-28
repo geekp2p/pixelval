@@ -16,7 +16,7 @@ import (
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astilectron"
 
-	"github.com/geekp2p/pixelval/internal/config"
+	"geekp2p/pixelval/internal/config"
 )
 
 type ChatMsg struct {
