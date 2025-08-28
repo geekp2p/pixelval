@@ -50,6 +50,8 @@ git push -u origin main --force
 
 git add .
 
-git commit -m "feat: add QUIC transport + room switch"
+git commit -m "fix: update .gitignore"
 
 git push -u origin main
+
+go mod init pixelval
