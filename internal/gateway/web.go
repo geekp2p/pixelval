@@ -61,7 +61,8 @@ func StartWeb(ctx context.Context, h host.Host, psub *pubsub.PubSub, topic *pubs
 		cfg:      cfg,
 	}
 
-	go g.consume(ctx, sub)
+	// go g.consume(ctx, sub)
+	go g.consume()
 
 	http.HandleFunc("/", g.serveIndex)
 	http.HandleFunc("/app.js", g.serveApp)
@@ -132,11 +133,19 @@ func (g *gateway) serveWS(w http.ResponseWriter, r *http.Request) {
 	}()
 }
 
-func (g *gateway) consume(ctx context.Context, sub *pubsub.Subscription) {
+func (g *gateway) consume() {
 	for {
+		g.mu.RLock()
+		sub := g.sub
+		ctx := g.ctx
+		g.mu.RUnlock()
+
 		msg, err := sub.Next(ctx)
 		if err != nil {
-			return
+			if ctx.Err() != nil {
+				return
+			}
+			continue
 		}
 		var cm ChatMsg
 		if err := json.Unmarshal(msg.Data, &cm); err != nil {
