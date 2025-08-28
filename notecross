@@ -1,0 +1,17 @@
+# Windows 64-bit
+go build -o pixelval.exe ./cmd/pixelval
+
+# Linux 64-bit
+set GOOS=linux
+set GOARCH=amd64
+go build -o pixelval ./cmd/pixelval
+
+# macOS (Intel)
+set GOOS=darwin
+set GOARCH=amd64
+go build -o pixelval ./cmd/pixelval
+
+# macOS (Apple Silicon)
+set GOOS=darwin
+set GOARCH=arm64
+go build -o pixelval ./cmd/pixelval

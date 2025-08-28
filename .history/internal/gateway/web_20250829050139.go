@@ -124,7 +124,6 @@ func (g *gateway) serveWS(w http.ResponseWriter, r *http.Request) {
 				Ts:   time.Now().Unix(),
 			}
 			b, _ := json.Marshal(msg)
-			g.broadcast(b)
 			_ = g.topic.Publish(context.Background(), b)
 		}
 	}()
@@ -142,19 +141,14 @@ func (g *gateway) consume(ctx context.Context) {
 		}
 		b, _ := json.Marshal(cm)
 
-		g.broadcast(b)
-	}
-}
-
-func (g *gateway) broadcast(b []byte) {
-	g.mu.RLock()
-	defer g.mu.RUnlock()
-	for c := range g.clients {
-		select {
-		case c.send <- b:
-		default:
+		g.mu.RLock()
+		for c := range g.clients {
+			select {
+			case c.send <- b:
+			default:
+			}
 		}
-		// g.mu.RUnlock()
+		g.mu.RUnlock()
 	}
 }
 
