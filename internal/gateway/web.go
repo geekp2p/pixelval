@@ -32,6 +32,7 @@ type wsClient struct {
 }
 
 type gateway struct {
+	ctx      context.Context
 	h        host.Host
 	psub     *pubsub.PubSub
 	topic    *pubsub.Topic
@@ -48,6 +49,7 @@ type gateway struct {
 
 func StartWeb(ctx context.Context, h host.Host, psub *pubsub.PubSub, topic *pubsub.Topic, sub *pubsub.Subscription, cfg config.Config) {
 	g := &gateway{
+		ctx:      ctx,
 		h:        h,
 		psub:     psub,
 		topic:    topic,
@@ -59,7 +61,7 @@ func StartWeb(ctx context.Context, h host.Host, psub *pubsub.PubSub, topic *pubs
 		cfg:      cfg,
 	}
 
-	go g.consume(ctx)
+	go g.consume(ctx, sub)
 
 	http.HandleFunc("/", g.serveIndex)
 	http.HandleFunc("/app.js", g.serveApp)
@@ -130,9 +132,9 @@ func (g *gateway) serveWS(w http.ResponseWriter, r *http.Request) {
 	}()
 }
 
-func (g *gateway) consume(ctx context.Context) {
+func (g *gateway) consume(ctx context.Context, sub *pubsub.Subscription) {
 	for {
-		msg, err := g.sub.Next(ctx)
+		msg, err := sub.Next(ctx)
 		if err != nil {
 			return
 		}
