@@ -26,6 +26,10 @@ go.work.sum
 
 # env file
 .env
+<<<<<<< HEAD
+note
+=======
+>>>>>>> 5afbf8a8359422fae8cbab6291d9f50e384f4ba8
 
 # Editor/IDE
 # .idea/

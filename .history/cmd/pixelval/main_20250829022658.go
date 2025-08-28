@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package main
 
 import (
@@ -43,7 +44,7 @@ func main() {
 	<-sig
 	log.Println("PixelVal: shutting down...")
 }
-
+=======
 package main
 
 import (
@@ -89,3 +90,4 @@ func main() {
 	<-sig
 	log.Println("PixelVal: shutting down...")
 }
+>>>>>>> 5afbf8a8359422fae8cbab6291d9f50e384f4ba8
