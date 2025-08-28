@@ -15,7 +15,7 @@ go run ./cmd/pixelval
 # UI: http://127.0.0.1:8081  (Electron will open if GUI=1)
 ```
 
-###
+### License
 ```
 🔓 Open source under a "copyleft-style" license: anyone may use, sell, or distribute games built on PixelVal, but code modifications must be published back to the community.
 ```
