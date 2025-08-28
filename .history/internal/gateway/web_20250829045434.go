@@ -16,7 +16,7 @@ import (
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astilectron"
 
-	"pixelval/internal/config"
+	"geekp2p/pixelval/internal/config"
 )
 
 type ChatMsg struct {
@@ -184,7 +184,7 @@ func (g *gateway) handleConfig(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "subscribe failed", 500)
 				return
 			}
-			g.sub.Cancel()
+			_ = g.sub.Cancel()
 			_ = g.topic.Close()
 			g.mu.Lock()
 			g.room = req.Room
