@@ -1,0 +1,27 @@
+:: 1) เข้าโฟลเดอร์โปรเจกต์
+cd /d E:\08-04-2023-HOSTSHARE\htm_go\pixelval
+
+:: 2) เริ่ม git และตั้งชื่ออีเมล (ครั้งเดียวต่อเครื่อง/ผู้ใช้)
+git init
+git config user.name "geekp2p"
+git config user.email "geekp2p@gmail.com"
+git config core.autocrlf true
+
+:: 3) กันพลาด: อย่าเผลอ push ไฟล์ลับ
+type .gitignore
+:: ถ้ายังไม่มีบรรทัดเหล่านี้ ให้เพิ่ม (ด้วย notepad) แล้วบันทึก
+:: .env
+:: *.env
+:: /bin/
+
+:: 4) เพิ่มไฟล์ทั้งหมดและคอมมิตแรก
+git add .
+git commit -m "chore: initial commit for PixelVal (single-binary P2P + Web/Electron UI)"
+
+:: 5) ตั้งสาขาหลักเป็น main และผูกกับ repo
+git branch -M main
+git remote add origin https://github.com/geekp2p/pixelval.git
+
+:: 6) ดันขึ้น GitHub
+git push -u origin main
+:: ตอนถามรหัสผ่าน ให้ใส่ PAT ของ GitHub แทน password
