@@ -17,7 +17,20 @@ import (
 	"github.com/asticode/go-astilectron"
 
 	"pixelval/internal/config"
+	"strconv"
 )
+
+func (g *gateway) makeKey(cm ChatMsg) string {
+	return cm.ID + ":" + strconv.FormatInt(cm.Ts, 10) + ":" + cm.Text
+}
+
+func (g *gateway) seenBefore(cm ChatMsg) bool {
+	key := g.makeKey(cm)
+	if _, ok := g.seen.LoadOrStore(key, time.Now()); ok {
+		return true
+	}
+	return false
+}
 
 type ChatMsg struct {
 	From string `json:"from"`
@@ -138,6 +151,7 @@ func (g *gateway) consume() {
 		g.mu.RLock()
 		sub := g.sub
 		ctx := g.ctx
+		selfID := g.h.ID().String()
 		g.mu.RUnlock()
 
 		msg, err := sub.Next(ctx)
@@ -151,11 +165,45 @@ func (g *gateway) consume() {
 		if err := json.Unmarshal(msg.Data, &cm); err != nil {
 			continue
 		}
-		b, _ := json.Marshal(cm)
 
+		// ข้อความที่เราส่งเอง ไม่ต้อง broadcast ซ้ำ
+		if cm.ID == selfID {
+			continue
+		}
+
+		// กันซ้ำด้วย seen-key (ดูข้อ 2)
+		if g.seenBefore(cm) {
+			continue
+		}
+
+		b, _ := json.Marshal(cm)
 		g.broadcast(b)
 	}
 }
+
+// func (g *gateway) consume() {
+// 	for {
+// 		g.mu.RLock()
+// 		sub := g.sub
+// 		ctx := g.ctx
+// 		g.mu.RUnlock()
+
+// 		msg, err := sub.Next(ctx)
+// 		if err != nil {
+// 			if ctx.Err() != nil {
+// 				return
+// 			}
+// 			continue
+// 		}
+// 		var cm ChatMsg
+// 		if err := json.Unmarshal(msg.Data, &cm); err != nil {
+// 			continue
+// 		}
+// 		b, _ := json.Marshal(cm)
+
+// 		g.broadcast(b)
+// 	}
+// }
 
 func (g *gateway) broadcast(b []byte) {
 	g.mu.RLock()

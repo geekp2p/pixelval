@@ -17,14 +17,48 @@ function addMsg({from, id, text, ts}) {
 }
 
 let ws;
+let reconnectTimer;
+
 function connect() {
+  // 1) ปิดตัวเก่าถ้ายังค้างอยู่ (OPEN/CONNECTING)
+  if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+    try { ws.onopen = ws.onclose = ws.onmessage = ws.onerror = null; } catch {}
+    try { ws.close(); } catch {}
+  }
+
+  // 2) เคลียร์รีไทม์เมอร์ก่อนตั้งใหม่
+  if (reconnectTimer) {
+    clearTimeout(reconnectTimer);
+    reconnectTimer = null;
+  }
+
   const proto = location.protocol === 'https:' ? 'wss' : 'ws';
   ws = new WebSocket(`${proto}://${location.host}/ws`);
-  ws.onopen = () => { status.textContent = 'Connected'; btn.disabled = false; };
-  ws.onclose = () => { status.textContent = 'Disconnected — retrying...'; btn.disabled = true; setTimeout(connect, 1500); };
-  ws.onerror = () => { status.textContent = 'Error'; };
-  ws.onmessage = ev => { try { addMsg(JSON.parse(ev.data)); } catch {} };
+
+  ws.onopen = () => {
+    status.textContent = 'Connected';
+    btn.disabled = false;
+  };
+
+  ws.onmessage = ev => {
+    try { addMsg(JSON.parse(ev.data)); } catch {}
+  };
+
+  ws.onerror = () => {
+    status.textContent = 'Error';
+  };
+
+  ws.onclose = () => {
+    status.textContent = 'Disconnected — retrying...';
+    btn.disabled = true;
+    // 3) ตั้ง reconnect แบบไม่ซ้อน
+    reconnectTimer = setTimeout(() => {
+      // เปิดใหม่เฉพาะกรณียังปิดอยู่จริง ๆ
+      if (!ws || ws.readyState === WebSocket.CLOSED) connect();
+    }, 1500);
+  };
 }
+
 connect();
 
 function loadConfig() {
