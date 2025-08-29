@@ -15,6 +15,24 @@ go run ./cmd/pixelval
 # UI: http://127.0.0.1:8081  (Electron will open if GUI=1)
 ```
 
+### Docker
+
+Build and run inside a container without needing Node.js or nginx:
+
+```bash
+docker build -t pixelval .
+docker run --rm -p 8081:8081 -p 4001:4001 -p 4003:4003 pixelval
+```
+
+Run multiple peers by mapping different host ports and, if needed, set
+`BOOTSTRAP_PEERS` so containers can discover each other:
+
+```bash
+# assume the first container prints: /ip4/172.17.0.2/tcp/4001/p2p/<peerID>
+docker run --rm -p 8082:8081 -p 4002:4001 \
+  -e BOOTSTRAP_PEERS=/ip4/172.17.0.2/tcp/4001/p2p/<peerID> pixelval
+```
+
 ### License
 ```
 🔓 Open source under a "copyleft-style" license: anyone may use, sell, or distribute games built on PixelVal, but code modifications must be published back to the community.
