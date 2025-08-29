@@ -58,6 +58,8 @@ type gateway struct {
 	mu      sync.RWMutex
 	clients map[*wsClient]bool
 	cfg     config.Config
+
+	seen sync.Map
 }
 
 func StartWeb(ctx context.Context, h host.Host, psub *pubsub.PubSub, topic *pubsub.Topic, sub *pubsub.Subscription, cfg config.Config) {
@@ -139,8 +141,16 @@ func (g *gateway) serveWS(w http.ResponseWriter, r *http.Request) {
 				Text: string(data),
 				Ts:   time.Now().Unix(),
 			}
+
+			// ✨ กันซ้ำ: mark seen ทันที
+			_ = g.seenBefore(msg)
+
 			b, _ := json.Marshal(msg)
+
+			// แสดงผลโลคัลทันที (เร็ว) + ให้ consume() ข้าม self
 			g.broadcast(b)
+
+			// กระจายออก pubsub
 			_ = g.topic.Publish(context.Background(), b)
 		}
 	}()
