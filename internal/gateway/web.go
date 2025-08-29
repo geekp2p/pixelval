@@ -142,6 +142,9 @@ func (g *gateway) serveWS(w http.ResponseWriter, r *http.Request) {
 				Ts:   time.Now().Unix(),
 			}
 
+			// log outbound chat for easier debugging
+			log.Printf("send[%s]: %s", msg.ID, msg.Text)
+
 			// ✨ กันซ้ำ: mark seen ทันที
 			_ = g.seenBefore(msg)
 
